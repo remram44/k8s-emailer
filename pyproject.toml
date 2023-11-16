@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "k8s-emailer"
-version = "0.1.1"
+version = "0.1.2"
 description = "Sends emails when Jobs end based on labels"
 authors = ["Remi Rampin <remi@rampin.org>"]
 license = "MIT"

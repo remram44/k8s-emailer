@@ -10,7 +10,7 @@ import smtplib
 import time
 
 
-__version__ = '0.1.1'
+__version__ = '0.1.2'
 
 
 METADATA_PREFIX = 'k8s-emailer.hpc.nyu.edu/'
