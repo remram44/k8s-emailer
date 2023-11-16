@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "k8s-emailer.fullname" . }}
+  labels:
+    {{- include "k8s-emailer.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "k8s-emailer.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "k8s-emailer.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "k8s-emailer.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: k8s-emailer
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: FULL_SYNC_INTERVAL
+              value: {{ .Values.fullSyncIntervalSeconds | toString | quote }}
+            - name: EMAIL_SUBJECT_TEMPLATE
+              value: {{ .Values.emailSubjectTemplate | quote }}
+            - name: EMAIL_TAG
+              value: {{ .Values.emailTag | quote }}
+            - name: EMAIL_SSL
+              value: {{ .Values.emailServer.ssl | toString | quote }}
+            - name: EMAIL_HOST
+              value: {{ required "email host is required" .Values.emailServer.host | quote }}
+            - name: EMAIL_PORT
+              value: {{ .Values.emailServer.port | toString | quote }}
+            - name: EMAIL_FROM
+              value: {{ .Values.emailServer.fromAddress | quote }}
+            {{- if (or .Values.emailServer.username .Values.emailServer.password) }}
+            - name: EMAIL_USERNAME
+              value: {{ required "username is required if password is set" .Values.emailServer.username }}
+            - name: EMAIL_PASSWORD
+              value: {{ required "password is required if username is set" .Values.emailServer.password }}
+            {{- end }}
+          ports:
+            - name: http-metrics
+              containerPort: 8080
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

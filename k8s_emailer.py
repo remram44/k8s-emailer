@@ -68,13 +68,16 @@ class Emailer(object):
             self.cls = smtplib.SMTP
             default_port = 587
 
-        self.host = os.environ['EMAIL_HOST']
+        self.host = os.environ.get('EMAIL_HOST')
+        assert self.host, "EMAIL_HOST is not set"
+
         if 'EMAIL_PORT' in os.environ:
             self.port = int(os.environ['EMAIL_PORT'], 10)
         else:
             self.port = default_port
 
-        self.from_address = os.environ['EMAIL_FROM']
+        self.from_address = os.environ.get('EMAIL_FROM')
+        assert self.from_address, "EMAIL_FROM is not set"
 
         if 'EMAIL_USERNAME' in os.environ or 'EMAIL_PASSWORD' in os.environ:
             self.credentials = (
