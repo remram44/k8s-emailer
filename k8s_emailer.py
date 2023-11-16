@@ -271,3 +271,11 @@ def do_sync(api, emailer):
                         },
                     },
                 )
+
+    PROM_ANNOTATED.clear()
+    for count_ns, count in annotations.items():
+        PROM_ANNOTATED.labels(count_ns).set(count)
+
+    PROM_BAD_ANNOTATIONS.clear()
+    for count_ns, count in bad_annotations.items():
+        PROM_BAD_ANNOTATIONS.labels(count_ns).set(count)
