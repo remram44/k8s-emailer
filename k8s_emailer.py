@@ -276,6 +276,9 @@ def do_sync(api, emailer):
     for count_ns, count in annotations.items():
         PROM_ANNOTATED.labels(count_ns).set(count)
 
+        # This makes sure the time series exist, enabling rate() to work
+        PROM_EMAILS.inc(0)
+
     PROM_BAD_ANNOTATIONS.clear()
     for count_ns, count in bad_annotations.items():
         PROM_BAD_ANNOTATIONS.labels(count_ns).set(count)
