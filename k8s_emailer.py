@@ -245,3 +245,24 @@ def do_sync(api, emailer):
                     meta.name,
                 )
                 PROM_SEND_ERRORS.inc()
+            else:
+                # Update last notification annotation
+                last_annotation = {
+                    'is_failure': is_failure,
+                    'is_success': is_success,
+                    'retries': retries,
+                }
+                batchv1.patch_namespaced_job(
+                    meta.name,
+                    ns,
+                    {
+                        'metadata': {
+                            'annotations': {
+                                ANNOTATION_LAST_NOTIFIED: json.dumps(
+                                    last_annotation,
+                                    separators=(',', ':'),
+                                ),
+                            },
+                        },
+                    },
+                )
