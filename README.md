@@ -2,6 +2,8 @@
 
 This is a simple controller that watches your Jobs and sends an email when they complete or fail. It is meant to offer similar functionality to what typical batch schedulers provide, for example SLURM.
 
+![screenshot of inbox with notification emails](screenshot.png)
+
 It is available as a Helm Chart which should make it easy to install anywhere:
 
 ```console
