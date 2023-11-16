@@ -124,6 +124,8 @@ def main():
     parser.add_argument('--cleanup-only', action='store_true', default=False)
     args = parser.parse_args()
 
+    prometheus_client.start_http_server(8080)
+
     if args.kubeconfig:
         logger.info("Using specified config file")
         k8s_config.load_kube_config(args.kubeconfig[0])
