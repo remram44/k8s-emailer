@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "k8s-emailer.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ .Values.metrics.service.type }}
   ports:
     - port: {{ .Values.metrics.service.port }}
       targetPort: http-metrics
