@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "k8s-emailer"
+version = "0.1.0"
+description = "Sends emails when Jobs end based on labels"
+authors = ["Remi Rampin <remi@rampin.org>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+prometheus-client = "*"
+kubernetes = "*"
+
+[tool.poetry.scripts]
+k8s-emailer = "k8s_emailer:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

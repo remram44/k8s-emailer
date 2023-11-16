@@ -1,0 +1,63 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: succeeds
+  labels:
+    k8s-emailer.hpc.nyu.edu/mode: "all"
+  annotations:
+    k8s-emailer.hpc.nyu.edu/addresses: "test-k8s@example.org"
+spec:
+  backoffLimit: 6
+  template:
+    spec:
+      containers:
+        - name: job
+          image: python:3.10
+          args: ["true"]
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: retries
+  labels:
+    k8s-emailer.hpc.nyu.edu/mode: "all"
+  annotations:
+    k8s-emailer.hpc.nyu.edu/addresses: "test-k8s@example.org"
+spec:
+  backoffLimit: 100
+  template:
+    spec:
+      containers:
+        - name: job
+          image: python:3.10
+          args:
+            - python
+            - -c
+            - |
+              import os
+              import random
+
+              # Succeed 10% of the time
+              if random.random() > 0.1:
+                  os.exit(1)
+      restartPolicy: Never
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fails
+  labels:
+    k8s-emailer.hpc.nyu.edu/mode: "all"
+  annotations:
+    k8s-emailer.hpc.nyu.edu/addresses: "test-k8s@example.org"
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      containers:
+        - name: job
+          image: python:3.10
+          args: ["false"]
+      restartPolicy: Never
